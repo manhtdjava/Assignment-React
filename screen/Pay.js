@@ -11,8 +11,10 @@ const Pay = ({ navigation, route }) => {
   const hanPhone = (text) => {
     setphone(text)
   };
-  const [check, setcheck] = useState(false);
-  const [check2, setcheck2] = useState(false);
+  const [check, setcheck] = useState(true);
+  const [check2, setcheck2] = useState(true);
+
+  console.log(check);
   return (
     <SafeAreaView>
 
@@ -26,7 +28,7 @@ const Pay = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
       {/* <Text>{totalPrice}</Text> */}
-      <ScrollView style={{ height: 640 }}>
+      <ScrollView style={{ height: 640 }} showsVerticalScrollIndicator={false}>
         <View style={{ width: '100%', alignItems: 'center' }}>
           <View style={{ width: '80%' }}>
             <View style={styles.input}>
@@ -95,7 +97,7 @@ const Pay = ({ navigation, route }) => {
             <TouchableOpacity
               onPress={() => setcheck(!check)}
 
-            >{check ?
+            >{!check ?
               <View style={styles.input2}>
                 <View style={{ width: '90%' }}>
                   <Text style={{ color: 'green' }}>
@@ -152,7 +154,7 @@ const Pay = ({ navigation, route }) => {
             {/* giao cod */}
             <TouchableOpacity
               onPress={() => setcheck2(!check2)}
-            >{check2 ?
+            >{!check2 ?
               <View style={styles.input2}>
                 <View style={{ width: '90%' }}>
                   <Text style={{ color: 'green', marginBottom: 10 }}>

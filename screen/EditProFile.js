@@ -41,25 +41,25 @@ const EditProFile = () => {
                     </Text>
 
                     <TextInput style={styles.input1}
-                        placeholder='Địa chỉ'
+                        placeholder='Nhập tên'
                         value={name}
                         onChangeText={hanName}
 
                     />
                     <TextInput style={styles.input1}
-                        placeholder='Địa chỉ'
+                        placeholder='Nhập email'
                         value={email}
                         onChangeText={hanEmail}
 
                     />
                     <TextInput style={styles.input1}
-                        placeholder='Địa chỉ'
+                        placeholder='Nhập Địa chỉ'
                         value={address}
                         onChangeText={hanAddress}
 
                     />
                     <TextInput style={styles.input1}
-                        placeholder='Địa chỉ'
+                        placeholder='Nhập số điện thoại'
                         value={phone}
                         onChangeText={hanPhone}
 

@@ -1,46 +1,40 @@
 import { Alert, FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/AntDesign'
 import BottomTab from './BottomTab'
 const Home = ({ navigation, route }) => {
-    const [search, setSearch] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const hanSearch = (text) => {
-        setSearch(text)
-    };
-
+    const [selectedCategoryId, setSelectedCategoryId] = useState(0);
+    const { userId } = route.params;
     // data 1
-    const [data1, setData1] = useState([
-        {
-            id: 'b0',
-            title: 'Body-lotions',
-        },
-        {
-            id: 'b1',
-            title: 'Categores',
-        },
-        {
-            id: 'b2',
-            title: 'Facial-clearser',
-        },
-        {
-            id: 'b3',
-            title: 'Perfumes',
-        },
-        {
-            id: 'b4',
-            title: 'Product-BG',
-        },
-    ]);
+    const [data1, setData1] = useState([]);
+    const list = async () => {
+        try {
+            let url = "http://localhost:3000/categories";
+            let res = await fetch(url);
+            const data1 = await res.json();
+            setData1(data1);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(() => { list() }, []);
 
     //data2
     const [data2, setData2] = useState([]);
     const ds = async () => {
         try {
             setIsLoading(true);
-            let url = "http://localhost:3000/product";
+            if (selectedCategoryId == 0) {
+                var url = "http://localhost:3000/products"
+            } else if (selectedCategoryId == 4) {
+                url = "http://localhost:3000/crops"
+            } else if (selectedCategoryId == 5) {
+                url = "http://localhost:3000/accessory"
+            } else {
+                url = `http://localhost:3000/products?categoryId=${selectedCategoryId}`;
+            }
             let res = await fetch(url);
             const data2 = await res.json();
             setData2(data2);
@@ -50,7 +44,7 @@ const Home = ({ navigation, route }) => {
             setIsLoading(false)
         }
     }
-    useEffect(() => { ds() }, []);
+    useEffect(() => { ds() }, [selectedCategoryId]);
     const handleRefresh = () => {
         setIsRefreshing(true); // Khi người dùng kéo xuống để làm mới, setIsRefreshing(true)
         ds(); // Gọi fetchData để tải lại dữ liệu
@@ -80,11 +74,15 @@ const Home = ({ navigation, route }) => {
                 console.log(ex);
             })
     }
+
+
+
     const Item = ({ item }) => {
+
         return <View style={{ width: '47%', height: 'auto', backgroundColor: 'white', borderRadius: 10, padding: 15, marginBottom: 20 }}
 
         >
-            <TouchableOpacity onPress={() => navigation.navigate('Product', { item })}>
+            <TouchableOpacity onPress={() => navigation.navigate('Product', { item, userId })}>
                 <Image style={{ width: '100%', height: 200 }} source={{ uri: item.img }} />
             </TouchableOpacity>
 
@@ -118,40 +116,46 @@ const Home = ({ navigation, route }) => {
             {/* item scrollhodico */}
 
 
-            <FlatList
-                style={{ marginVertical: 20, height: 40 }}
-                horizontal={true}
-                data={data1}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => {
-                    return <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                        <TouchableOpacity>
-                            <Text style={{ color: 'black', fontSize: 16, marginRight: 20 }}>{item.title}</Text>
-                        </TouchableOpacity>
-                    </View>
-                }}
-                keyExtractor={item => item.id}
-            />
-
-            {/* item store */}
-            {isLoading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
+            <View>
                 <FlatList
-                    numColumns={2}
-                    data={data2}
-                    columnWrapperStyle={styles.row}
-                    showsVerticalScrollIndicator={false}
-                    style={{ marginBottom: 60 }}
+                    style={{ marginVertical: 20, }}
+                    horizontal={true}
+                    data={data1}
+                    showsHorizontalScrollIndicator={false}
                     renderItem={({ item }) => {
-                        return <Item item={item} />
+
+                        return <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <TouchableOpacity>
+                                <Text style={{ color: 'black', fontSize: 16, marginRight: 20 }}
+                                    onPress={() => setSelectedCategoryId(item.id)}>{item.name}
+
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     }}
                     keyExtractor={item => item.id}
-                    refreshControl={ // Sử dụng RefreshControl để kích hoạt hành động kéo xuống để làm mới
-                        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-                    }
                 />
-            )}
+
+                {/* item store */}
+                {isLoading ? (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                ) : (
+                    <FlatList
+                        numColumns={2}
+                        data={data2}
+                        columnWrapperStyle={styles.row}
+                        showsVerticalScrollIndicator={false}
+                        style={{ marginBottom: 60 }}
+                        renderItem={({ item }) => {
+                            return <Item item={item} />
+                        }}
+                        keyExtractor={item => item.id}
+                        refreshControl={ // Sử dụng RefreshControl để kích hoạt hành động kéo xuống để làm mới
+                            <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+                        }
+                    />
+                )}
+            </View>
         </SafeAreaView>
     )
 }

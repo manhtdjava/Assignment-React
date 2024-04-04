@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import BottomTab from './BottomTab'
 
 const Product = ({ navigation, route }) => {
-    const { item } = route.params;
-
+    const { item, userId } = route.params;
+    console.log("userid " + userId);
 
     const [qty, setqty] = useState(1);
     const [tong, setTong] = useState(item.price)
@@ -13,29 +13,41 @@ const Product = ({ navigation, route }) => {
         const newQty = qty + action
         setqty(newQty >= 1 ? newQty : 1)
         setTong(Number(newQty * item.price) >= item.price ? Number(newQty * item.price) : item.price)
+
     };
+    console.log(qty);
+    const formattedPrice = tong.toLocaleString();
     const addToCart = async () => {
-        fetch('http://localhost:3000/cart', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // Thêm các header khác nếu cần thiết, ví dụ như token xác thực
-            },
-            body: JSON.stringify({
-                img: item.img,
-                name: item.name,
-                price: item.price,
-                cont: item.cont
-            })
-        })
-            .then((res) => {
-                if (res.status == 201) {
-                    Alert.alert('Thêm vào giỏ hàng thành công')
-                }
-            })
-            .catch((ex) => {
-                console.log(ex);
-            })
+        try {
+            // Tạo một đối tượng mô tả sản phẩm được thêm vào giỏ hàng
+            const newCartItem = {
+                productId: item.id,
+                // quantity: qty
+            };
+
+            // Gửi yêu cầu POST để thêm sản phẩm vào giỏ hàng
+            const url = `http://localhost:3000/users/${userId}/carts`; // Thay đổi '1' thành id của người dùng cụ thể
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newCartItem)
+            });
+
+            // Kiểm tra phản hồi từ máy chủ
+            if (response.ok) {
+                Alert.alert('Success', 'Item added to cart successfully');
+            } else {
+                // Nếu không thành công, xử lý lỗi
+                const errorData = await response.json();
+                console.log(errorData); // In ra lỗi để debug
+                Alert.alert('Error', 'Failed to add item to cart');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Alert.alert('Error', 'An error occurred while processing your request');
+        }
     };
 
 
@@ -53,11 +65,11 @@ const Product = ({ navigation, route }) => {
             </View>
             {/* item1 */}
             <View style={{ width: '100%', height: '70%', alignItems: 'center' }}>
-                <Image source={require('../acces/img/product-bg/4.png')} resizeMode='cover' style={{ width: '100%', height: 450, opacity: 0.6 }} />
+
                 <View style={{ position: 'absolute', top: 80, left: 110 }}>
-                    <Image source={{ uri: item.img }} resizeMode='cover' style={{ width: 200, height: 300 }} />
+                    {/* <Image source={{ uri: item.img }} resizeMode='cover' style={{ width: 200, height: 300 }} /> */}
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '100%' }}>
+                {/* <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '100%' }}>
                     <TouchableOpacity style={styles.item}>
                         <Image source={require('../acces/img/categories/skincare.png')} resizeMode='cover' style={{ width: 40, height: 40, marginBottom: 8 }} />
                         <Text>Skincare</Text>
@@ -70,7 +82,7 @@ const Product = ({ navigation, route }) => {
                         <Image source={require('../acces/img/categories/natural.png')} resizeMode='cover' style={{ width: 40, height: 40, marginBottom: 8 }} />
                         <Text>Natural</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
             </View>
 
             <View style={styles.item1}>
@@ -81,13 +93,13 @@ const Product = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
-                    <Text style={{ fontSize: 14, fontWeight: '300' }}>{item.cont}</Text>
-                    <Text style={{ fontSize: 14, fontWeight: '300' }}>
-                        <Text style={{ fontSize: 14, fontWeight: '300' }}>134</Text> Reviews
+                    <Text style={{ fontSize: 14, fontWeight: '300' }}>{item.size}</Text>
+                    <Text style={{ fontSize: 14, fontWeight: '300' }}>Còn
+                        <Text style={{ fontSize: 14, fontWeight: '300', color: 'green' }}> {item.status}</Text>
                     </Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
-                    <Text style={{ fontSize: 23, fontWeight: '700' }}>$ {tong}</Text>
+                    <Text style={{ fontSize: 23, fontWeight: '700' }}>$ {formattedPrice}</Text>
                     <View style={styles.quantity}>
                         <TouchableOpacity onPress={() => handleQty(-1)}>
                             <Text style={{ fontSize: 23, color: '#555' }}>-</Text>

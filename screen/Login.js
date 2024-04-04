@@ -6,7 +6,6 @@ import BottomTab from './BottomTab';
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [data, setData] = useState([]);
 
   const doLogin = () => {
     if (email.length == 0) {
@@ -16,7 +15,7 @@ const Login = ({ navigation }) => {
     if (password.length == 0) {
       Alert.alert('Chưa nhập pass!'); return;
     }
-    let url = "http://localhost:3000/Login?email=" + email;
+    let url = "http://localhost:3000/users?email=" + email;
     fetch(url)
       .then((res) => { return res.json(); })
       .then(async (res_login) => {
@@ -24,14 +23,17 @@ const Login = ({ navigation }) => {
           Alert.alert('Sai email hoặc lỗi trùng lặp dữ liệu!'); return;
         } else {
           let obju = res_login[0];
-          if (obju.pass != password) {
+          if (obju.password != password) {
             Alert.alert('Sai pass!');
             console.log(password);
+            console.log(obju.pass);
             return;
           } else {
             try {
               await AsyncStorage.setItem('login', JSON.stringify(obju));
-              navigation.navigate('Home');
+              let userId = obju.id;
+              navigation.navigate('Home', { userId });
+              console.log("usid " + userId);
             } catch (e) {
               // saving error
               console.log(e);

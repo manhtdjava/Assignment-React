@@ -38,7 +38,7 @@ function App() {
   return (
     <NavigationContainer>
       <Mycomponent setactiveScreen={setactiveScreen} />
-      <Stack.Navigator initialRouteName='EditProFile' screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName='Cart' screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Home" component={Home} />

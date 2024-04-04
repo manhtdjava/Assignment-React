@@ -66,16 +66,6 @@ const User = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
 
-            {/* <View style={styles.item}>
-                <Image source={require('../acces/img/log-in.png')} resizeMode='cover' style={{ width: 25, height: 25 }} />
-                <View>
-                    <Text style={{ width: 250, fontSize: 18, fontWeight: '600' }}>Log in</Text>
-                </View>
-                <TouchableOpacity style={{ padding: 10 }} onPress={createTwoButtonAlert}>
-
-                    <Image source={require('../acces/img/next.png')} resizeMode='cover' style={{ width: 20, height: 20 }} />
-                </TouchableOpacity>
-            </View> */}
         </SafeAreaView>
     )
 }
@@ -83,15 +73,5 @@ const User = ({ navigation }) => {
 export default User
 
 const styles = StyleSheet.create({
-    item: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: "center",
-        marginTop: 20,
-        width: '100%',
-        height: 50,
-        backgroundColor: 'white',
-        padding: 15,
-        borderRadius: 10
-    }
+   
 })
